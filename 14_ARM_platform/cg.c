@@ -158,7 +158,7 @@ int cgloadglob(int id) {
 			fprintf(Outfile, "\tmovzbq\t%s(\%%rip), %s\n", Gsym[id].name, reglist[r]);
 			break;
 		case P_INT:
-			fprintf(Outfile, "\tmovzbl\t%s(\%%rip), %s\n", Gsym[id].name, reglist[r]);
+			fprintf(Outfile, "\tmovzb\t%s(\%%rip), %s\n", Gsym[id].name, reglist[r]);
 			break;
 		case P_LONG:
 			fprintf(Outfile, "\tmovq\t%s(\%%rip), %s\n", Gsym[id].name, reglist[r]);
@@ -189,7 +189,7 @@ int cgstorglob(int r, int id) {
 
 // List of comparisons instructions in AST order:
 //			     A_EQ,  A_NE,   A_LT,   A_GT,    A_LE, A_GE
-static char *cmplist[] = { "sete", "set", "setl", "setg", "setle", "setge"};
+static char *cmplist[] = { "sete", "setne", "setl", "setg", "setle", "setge"};
 
 // Compare two registers and set if trues.
 int cgcompare_and_set(int ASTop, int r1, int r2) {

@@ -16,7 +16,7 @@ comp_arm: $(ARMSRCS)
 clean:
 	rm -f comp comp_arm compn *.o *.s *.out out
 
-test: comp1 tests/runtests
+test: comp tests/runtests
 	(cd tests; chmod +x runtests; ./runtests)
 
 arm_qemu: comp_arm ./tests/input02 ./lib/printint.c
@@ -24,8 +24,8 @@ arm_qemu: comp_arm ./tests/input02 ./lib/printint.c
 	arm-linux-gnueabi-gcc -o arm.out out.s ./lib/printint.c -static
 	qemu-arm-static ./arm.out
 
-armtest: comp_arm tests/runtests
-	(cd tests; chmod +x runtests; ./runtests)
+armtest: comp_arm tests/armtests
+	(cd tests; chmod +x armtests; ./armtests)
 
 testn: compn tests/runtestsn
 	(cd tests; chmod +x runtestsn; ./runtestsn)

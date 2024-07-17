@@ -1,8 +1,8 @@
 #!/bin/sh
 # Make the output files for each test
 
-if [ ! -f ../comp1 ]
-then echo "Need to build ../comp1 first!"; exit 1
+if [ ! -f ../comp ]
+then echo "Need to build ../comp first!"; exit 1
 fi
 
 for i in input*

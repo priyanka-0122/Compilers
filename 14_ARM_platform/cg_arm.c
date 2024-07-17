@@ -42,7 +42,7 @@ static void set_int_offset(int val) {
 
 	// See if it is already there
 	for (int i = 0; i < Intslot; i++) {
-		if ( Intlist[i] == val) {
+		if (Intlist[i] == val) {
 			offset = 4 * i;
 			break;
 		}
@@ -73,7 +73,7 @@ void cgpostamble() {
 	fprintf(Outfile, ".L2:\n");
 	for (int i = 0; i < Globs; i++) {
 		if (Gsym[i].stype == S_VARIABLE)
-		fprintf(Outfile, "\t.word %s\n", Gsym[i]. name);
+		fprintf(Outfile, "\t.word %s\n", Gsym[i].name);
 	}
 
 	// Print out the integer literals
@@ -234,12 +234,10 @@ int cgstorglob(int r, int id) {
 // List of comparisons instructions in AST order:
 //			    A_EQ,    A_NE,    A_LT,    A_GT,    A_LE,    A_GE
 static char *cmplist[] = { "moveq", "movne", "movlt", "movgt", "movle", "movge"};
-//static char *cmplist[] = { "sete", "set", "setl", "setg", "setle", "setge"};
 
 // List of inverted jump instructions in AST order:
 //			       A_EQ,    A_NE,    A_LT,    A_GT,    A_LE,    A_GE
 static char *invcmplist[] = { "movne", "moveq", "movge", "movle", "movgt", "movlt" };
-//static char *invcmplist[] = { "jne", "je", "jge", "jle", "jg", "jl" };
 
 // Compare two registers and set if trues.
 int cgcompare_and_set(int ASTop, int r1, int r2) {
@@ -247,9 +245,9 @@ int cgcompare_and_set(int ASTop, int r1, int r2) {
 	if (ASTop < A_EQ || ASTop > A_GE)
 		fatal("Bad ASTop in cgcompare_and_set()");
 	fprintf(Outfile, "\tcmp\t%s, %s\n", reglist[r1], reglist[r2]);
-	fprintf(Outfile, "\t%s\t%s #1\n", cmplist[ASTop - A_EQ], reglist[r2]);
-	fprintf(Outfile, "\t%s\t%s #0\n", invcmplist[ASTop - A_EQ], reglist[r2]);
-	fprintf(Outfile, "\tuxtb\t%s, %s\n", reglist[r2], reglist[r2]);
+	fprintf(Outfile, "\t%s\t%s, #1\n", cmplist[ASTop - A_EQ], reglist[r2]);
+	fprintf(Outfile, "\t%s\t%s, #0\n", invcmplist[ASTop - A_EQ], reglist[r2]);
+	fprintf(Outfile, "\tand\t%s, #255\n", reglist[r2]);
 	free_register(r1);
 	return (r2);
 }
