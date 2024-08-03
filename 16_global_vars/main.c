@@ -41,13 +41,7 @@ int main(int argc, char *argv[]) {
 	scan(&Token);				// Get the first token from the input
 	genpreamble();				// Output the preamble
 	global_declarations();			// Parse the global declarations
-/*	while (1) {				// Parse a function
-		tree = function_declaration();
-		genAST(tree, NOREG, 0);		// Generate the assembly code for it
-		if (Token.token == T_EOF)	// Stop when we reached EOF
-			break;
-	}
-*/	genpostamble();
+	genpostamble();
 	fclose(Outfile);
 	fclose(Infile);
 	return(0);

@@ -26,7 +26,6 @@ test4: comp input04
 	gcc -o out out.s
 	./out
 
-
 test5: comp input05
 	./comp input05
 	gcc -o out out.s
