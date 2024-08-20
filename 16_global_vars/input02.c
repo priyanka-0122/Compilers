@@ -2,11 +2,11 @@ int a;
 
 int add()
 {
-	int c;
-	c = 10;
-	c = c + a;
-	printint(c);
-	return(c);
+	int b;
+	b = 10;
+	b = b + a;
+	printint(b);
+	return(b);
 }
 
 int main() {
