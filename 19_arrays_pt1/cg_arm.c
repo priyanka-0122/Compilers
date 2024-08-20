@@ -136,8 +136,8 @@ static void set_var_offset(int id) {
 	
 // Load a value from a variable into a register. Return the number of the register
 int cgloadglob(int id) {
-  	// Get a new register
-  	int r = alloc_register();
+	// Get a new register
+	int r = alloc_register();
 
 	// Get the offset to the variable
 	set_var_offset(id);
@@ -150,7 +150,7 @@ int cgloadglob(int id) {
 			fprintf(Outfile, "\tldr\t%s, [r3]\n", reglist[r]);
 			break;
 	}
-  	return (r);
+	return (r);
 }
 
 // Add two registers together and return the number of the register with the result
@@ -224,16 +224,16 @@ int cgstorglob(int r, int id) {
 		case P_INTPTR:
 		case P_LONGPTR:
       			fprintf(Outfile, "\tstr\t%s, [r3]\n", reglist[r]);
-      			break;
-    		default:
-      			fatald("Bad type in cgstorglob:", Gsym[id].type);
-  	}
-  	return (r);
+			break;
+		default:
+			fatald("Bad type in cgstorglob:", Gsym[id].type);
+	}
+	return (r);
 }
 
 // Array of type sizes in P_XXX order. 0 means no size.
-//		  P_NONE, P_VOID, P_CHAR, P_INT, P_LONG, P_CHARPTR, P_INTPTR, P_LONGPTR
-static int psize[] = { 0, 0, 1, 4, 8, 8, 8, 8, 8}; //4, 4, 4, 4, 4};
+//		  P_NONE, P_VOID, P_CHAR, P_INT, P_LONG, P_VOIDPTR, P_CHARPTR, P_INTPTR, P_LONGPTR
+static int psize[] = { 0, 0, 1, 4, 8, 8, 8, 8, 8};
 
 // Given a P_XXX type value, return the size of a primitive type in bytes.
 int cgprimsize(int type) {
@@ -311,7 +311,7 @@ int cgcompare_and_jump(int ASTop, int r1, int r2, int label) {
 
 	// Check the range of the AST operation
 	if (ASTop < A_EQ || ASTop > A_GE)
-		fatal("Bad ASTop in cgcompare_and_set()");
+		fatal("Bad ASTop in cgcompare_and_jump()");
 
 	fprintf(Outfile, "\tcmp\t%s, %s\n", reglist[r1], reglist[r2]);
 	fprintf(Outfile, "\t%s\tL%d\n", brlist[ASTop - A_EQ], label);
@@ -327,7 +327,7 @@ int cgwiden (int r, int oldtype, int newtype) {
 
 // Generate code to return a value from a function
 void cgreturn(int reg, int id) {
-	
+	// Generate code depending on the function's type
 	switch (Gsym[id].type) {
 		case P_CHAR:
 		case P_INT:

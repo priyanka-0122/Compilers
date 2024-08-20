@@ -2,15 +2,15 @@
 # Make the output files for each test
 
 if [ ! -f ../comp ]
-then echo "Need to build ../comp first!"; exit 1
+then echo "Need to build ../comp1 first!"; exit 1
 fi
 
 for i in input*
 do if [ ! -f "out.$i" ]
    then
-     ../comp_arm $i
-     arm-linux-gnueabi-gcc -o out out.s ../lib/printint.c -static
-     qemu-arm-static ./out > out.$i
+     ../comp $i
+     cc -o out out.s ../lib/printint.c
+     ./out > out.$i
      rm -f out out.s
    fi
 done
