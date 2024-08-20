@@ -3,22 +3,25 @@ int a;
 int add()
 {
 	int b;
-	int a;
-	a = 2;
 	b = 10;
+	printint(a);
 	b = b + a;
+	a = a * 2;
+	printint(a);
 	printint(b);
 	return(b);
 }
 
 int main() {
-	int b;
+	int b, c;
 	b = 3;
 	a = 5;
+	printint(b);
 	b = b + a;
 	printint(b);
 	b = add(b) + b;
-	printint(b);
 	printint(a);
+	printint(b);
+	printint(c);
 	return (0);
 }
