@@ -46,12 +46,9 @@ int parse_type(struct symtable **ctype) {
 	return (type);
 }
 
-
-
-
-
 // Parse the declaration of a scalar variable or an array with a given size. The identifier has
-// been scanned & we have the type class is the variable's class. Return the pointer to variable's entry in the symbol table
+// been scanned & we have the type class is the variable's class. Return the pointer to
+// variable's entry in the symbol table
 struct symtable *var_declaration(int type, struct symtable *ctype, int class) {
 	struct symtable *sym = NULL;
 
@@ -80,7 +77,7 @@ struct symtable *var_declaration(int type, struct symtable *ctype, int class) {
 			// We treat the array as a pointer to its elements' type
 			switch (class) {
 				case C_GLOBAL:
-					sym = addglob(Text, pointer_to(type, ctype, S_ARRAY, Token.intvalue);
+					sym = addglob(Text, pointer_to(type), ctype, S_ARRAY, Token.intvalue);
 					break;
 				case C_LOCAL:
 				case C_PARAM:
@@ -94,56 +91,50 @@ struct symtable *var_declaration(int type, struct symtable *ctype, int class) {
 		match(T_RBRACKET, "]");
 	} else {
 		// Add this as a known scalar and generate its space in assembly
-		switch (class) {
-			case C_GLOBAL:
-				sym = addglob(Text, type, ctype, S_VARIABLE, 1);
-				break;
-			case C_LOCAL:
-				sym = addlocl(Text, type, ctype, S_VARIABLE, 1);
-				break;
-			case C_PARAM:
-				sym = addparm(Text, type, ctype, S_VARIABLE, 1);
-				break;
-			case C_MEMBER:
-				sym = addmemb(Text, type, ctype, S_VARIABLE, 1);
-				break;
+			switch (class) {
+				case C_GLOBAL:
+					sym = addglob(Text, type, ctype, S_VARIABLE, 1);
+					while (1) {
+						if (Token.token == T_COMMA) {
+							scan(&Token);
+							sym->next = var_declaration(type, ctype, C_GLOBAL);
+						}
+						if (Token.token == T_IDENT)
+							scan(&Token);
+						if (Token.token == T_SEMI)
+							break;
+						}
+					break;
+				case C_LOCAL:
+					sym = addlocl(Text, type, ctype, S_VARIABLE, 1);
+					while (1) {
+						if (Token.token == T_COMMA) {
+							scan(&Token);
+							sym->next = var_declaration(type, ctype, C_LOCAL);
+						}
+						if (Token.token == T_IDENT)
+							scan(&Token);
+						if (Token.token == T_SEMI)
+							break;
+						}
+					break;
+				case C_PARAM:
+					sym = addparm(Text, type, ctype, S_VARIABLE, 1);
+					break;
+				case C_MEMBER:
+					sym = addmemb(Text, type, ctype, S_VARIABLE, 1);
+					break;
+			}
 		}
-	}
 	return (sym);
-/*****
-    		while(1) {
-			// Add this as a known scalar and generate its space in assembly
-			if (class == C_LOCAL) {
-				if (addlocl(Text, type, S_VARIABLE, class, 1) == -1)
-					fatals("Duplicate local variable declaration", Text);
-			} else {
-				addglob(Text, type, S_VARIABLE, class, 1);
-			}
-
-			if (class != C_PARAM) {
-				// If the next token is a semicolon, return.
-				if (Token.token == T_SEMI) {
-					return;
-				}
-				// If the next token is a comma, skip it, get the identifier and loop back
-    				if (Token.token == T_COMMA) {
-      					scan(&Token);
-      					ident();
-      					continue;
-    				}
-    				fatal("Missing , or ; after identifier");
-			} else {
-				break;
-			}
-		}		
-	}
-****/
 }
 
-// When called to parse function parameters, separate_token is ','. When called to parse members of a struct/union, separate_token is ';'.
+// When called to parse function parameters, separate_token is ','.
+// When called to parse members of a struct/union, separate_token is ';'.
 //
 // Parse a list of variables. Add them as symbols to one of the symbol table lists, and return the number of variables.
-// If funcsym is not NULL, there is an existing function prototype, so compare each variable's type against this prototype.
+// If funcsym is not NULL, there is an existing function prototype, so compare each variable's
+// type against this prototype.
 static int var_declaration_list(struct symtable *funcsym, int class,
 				int separate_token, int end_token) {
 	int type;
@@ -287,7 +278,10 @@ static struct symtable *struct_declaration(void) {
 	// Set the offset of the initial member and find the first free byte after it
 	m = ctype->member;
 	m->posn = 0;
-	offset = typesize(m->type, m->ctype);
+	if (m->type == P_CHAR && m->next->type != P_CHAR)
+		offset = 4;
+	else
+		offset = typesize(m->type, m->ctype);
 
 	// Set the position of each successive member in the struct
 	for (m = m->next; m != NULL; m = m->next) {
@@ -296,6 +290,8 @@ static struct symtable *struct_declaration(void) {
 
 		// Get the offset of the next free byte after this member
 		offset += typesize(m->type, m->ctype);
+		if (m->type == P_CHAR && m->next->type != P_CHAR)
+			offset = offset + (4 - (offset % 4));
 	}
 
 	// Set the overall size of the struct

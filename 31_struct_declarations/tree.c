@@ -4,14 +4,16 @@
 
 // Build and return a generic AST node
 struct ASTnode *mkastnode(int op, int type,
-			struct ASTnode *left, struct ASTnode *mid, struct ASTnode *right,
-			int intvalue) {
+			struct ASTnode *left,
+			struct ASTnode *mid,
+			struct ASTnode *right,
+			struct symtable *sym, int intvalue) {
 	struct ASTnode *n;
 	
 	//Calloc a new ASTnode
 	n = (struct ASTnode *)calloc(1, sizeof(struct ASTnode));
 	if (n == NULL) {
-		fprintf(stderr, "Unable to calloc a node in mkastnode()\n");
+		fprintf(stderr, "Unable to calloc a node in mkastnode()");
 		exit(1);
 	}
 	
@@ -21,18 +23,19 @@ struct ASTnode *mkastnode(int op, int type,
 	n->left = left;
 	n->mid = mid;
 	n->right = right;
+	n->sym = sym;
 	n->intvalue = intvalue;
 	return (n);
 }
 
 // Make an AST leaf node
-struct ASTnode *mkastleaf(int op, int type, int intvalue) {
-	return (mkastnode(op, type, NULL, NULL, NULL, intvalue));
+struct ASTnode *mkastleaf(int op, int type, struct symtable *sym, int intvalue) {
+	return (mkastnode(op, type, NULL, NULL, NULL, sym, intvalue));
 }
 
 // Make a unary AST node with only one child
-struct ASTnode *mkastunary(int op, int type, struct ASTnode *left, int intvalue) {
-	return (mkastnode(op, type, left, NULL, NULL, intvalue));
+struct ASTnode *mkastunary(int op, int type, struct ASTnode *left, struct symtable *sym, int intvalue) {
+	return (mkastnode(op, type, left, NULL, NULL, sym, intvalue));
 }
 
 // Generate and return a new label number just for AST dumping purposes
@@ -50,38 +53,39 @@ void dumpAST(struct ASTnode *n, int label, int level) {
 		case A_IF:
       			Lfalse = gendumplabel();
       			for (int i = 0; i < level; i++)
-				fprintf(stdout, " ");
+				      fprintf(stdout, " ");
       			fprintf(stdout, "A_IF");
       			if (n->right) {
-				Lend = gendumplabel();
+				      Lend = gendumplabel();
         			fprintf(stdout, ", end L%d", Lend);
       			}
       			fprintf(stdout, "\n");
-      			dumpAST(n->left, Lfalse, level+2);
-      			dumpAST(n->mid, NOLABEL, level+2);
+
+      			dumpAST(n->left, Lfalse, level + 2);
+      			dumpAST(n->mid, NOLABEL, level + 2);
       			if (n->right)
-				dumpAST(n->right, NOLABEL, level+2);
+				      dumpAST(n->right, NOLABEL, level + 2);
       			return;
     		case A_WHILE:
       			Lstart = gendumplabel();
       			for (int i = 0; i < level; i++)
-				fprintf(stdout, " ");
+				      fprintf(stdout, " ");
       			fprintf(stdout, "A_WHILE, start L%d\n", Lstart);
       			Lend = gendumplabel();
-      			dumpAST(n->left, Lend, level+2);
-      			dumpAST(n->right, NOLABEL, level+2);
+      			dumpAST(n->left, Lend, level + 2);
+      			dumpAST(n->right, NOLABEL, level + 2);
       			return;
   	}
 
   	// Reset level to -2 for A_GLUE
-  	if (n->op==A_GLUE)
-		level= -2;
+  	if (n->op == A_GLUE)
+		level = -2;
 
   	// General AST node handling
   	if (n->left)
-		dumpAST(n->left, NOLABEL, level+2);
+		dumpAST(n->left, NOLABEL, level + 2);
   	if (n->right)
-		dumpAST(n->right, NOLABEL, level+2);
+		dumpAST(n->right, NOLABEL, level + 2);
 
   	for (int i = 0; i < level; i++)
 		fprintf(stdout, " ");
