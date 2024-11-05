@@ -107,7 +107,7 @@ static struct ASTnode *array_access(void) {
   	right = modify_type(right, left->type, A_ADD);
 
   	// Return an AST tree where the array's base has the offset added to it, and dereference the element.
-	// Still an lvalue at this point.
+	  // Still an lvalue at this point.
   	left = mkastnode(A_ADD, aryptr->type, left, NULL, right, NULL, 0);
   	left = mkastunary(A_DEREF, value_at(left->type), left, NULL, 0);
   	return (left);
@@ -336,9 +336,7 @@ struct ASTnode *binexpr(int ptp) {
 
 	// Get the tree on the left. Fetch the next token at the same time.
 	left = prefix();
-
-	// If we hit one of several terminating tokens, return just the left node
-  	tokentype = Token.token;
+  tokentype = Token.token;
   	
 	// If we hit a semicolon or ')', return just the left node
   	if (tokentype == T_SEMI || tokentype == T_RPAREN ||
