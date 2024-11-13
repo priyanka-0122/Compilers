@@ -53,8 +53,7 @@ struct token {
 	int intvalue;	// For T_INTLIT, the integer value
 };
 
-// AST node types. The first few line up
-// with the related tokens
+// AST node types. The first few line up with the related tokens
 enum {
 	A_ASSIGN= 1, A_LOGOR, A_LOGAND,
 	A_OR, A_XOR, A_AND,
@@ -75,7 +74,8 @@ enum {
 // Primitive types. The bottom 4 bits is an integer value that represents the level
 // of indirection, e.g. 0= no pointer, 1= pointer, 2= pointer pointer etc.
 enum {
-	P_NONE, P_VOID = 16, P_CHAR = 32, P_INT = 48, P_LONG = 64,
+	P_NONE,
+	P_VOID = 16, P_CHAR = 32, P_INT = 48, P_LONG = 64,
 	P_STRUCT=80, P_UNION=96
 };
 

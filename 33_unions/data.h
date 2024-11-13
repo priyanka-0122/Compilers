@@ -1,8 +1,7 @@
+// extern_ is a custom extension of extern
 #ifndef extern_
  #define extern_ extern
 #endif
-
-// extern_ is a custom extension of extern
 
 extern_ int Line;				// Current line number			
 extern_ int Putback;				// Character put back by scanner

@@ -100,7 +100,7 @@ struct symtable *addunion(char *name, int type, struct symtable *ctype,
 	return (sym);
 }
 
-// Search for a symbol in a specific list. Return a pointer to the found node or NULL if not found.
+// Search for a symbol in a specific list. Return a pointer to the found node or NULL if not found
 static struct symtable *findsyminlist(char *s, struct symtable *list) {
 	for (; list != NULL; list = list->next)
 		if ((list->name != NULL) && !strcmp(s, list->name))
@@ -113,7 +113,7 @@ struct symtable *findglob(char *s) {
 	return (findsyminlist(s, Globhead));
 }
 
-// Determine if the symbol s is in the local symbol table. Return a pointer to the found node or NULL if not found.
+// Determine if the symbol s is in the local symbol table. Return a pointer to the found node or NULL if not found
 struct symtable *findlocl(char *s) {
 	struct symtable *node;
 

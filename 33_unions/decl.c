@@ -304,26 +304,23 @@ static struct symtable *composite_declaration(int type) {
 	// Set the position of each successive member in the struct
 	for (m = m->next; m != NULL; m = m->next) {
 		// Set the offset for this member
-		if (type == P_STRUCT)
+		if (type == P_STRUCT) {
 			m->posn = genalign(m->type, offset, 1);
-		else
-			m->posn = 0;
 
-		// Set the offset as the highest typesize among the member for union
-		if (type == P_UNION) {
-			if (offset < typesize(m->type, m->ctype))
-				offset = typesize(m->type, m->ctype);
-		} else {		
 			// Get the offset of the next free byte after this member
 			offset += typesize(m->type, m->ctype);
-		}
 
-		// Structure padding
-		if (type == P_STRUCT) 
+			// Structure padding
 			if (m->type == P_CHAR && m->next->type != P_CHAR)
 				offset = offset + (4 - (offset % 4));
-	}
+		} else {
+			m->posn = 0;
 
+			// Set the offset as the highest typesize among the member for union
+			if (offset < typesize(m->type, m->ctype))
+				offset = typesize(m->type, m->ctype);
+		}
+	}
 	// Set the overall size of the composite type
 	ctype->size = offset;
 	return (ctype);
